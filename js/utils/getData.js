@@ -1,11 +1,11 @@
 // Подгружает файл синхронно через Ajax, возвращает респонс
 const loadJsonFileAjaxSync = (filePath) => {
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", filePath, false);
+  xhr.open(`GET`, filePath, false);
   xhr.send();
   switch (xhr.status) {
     case 200:
-      return xhr.responseText
+      return xhr.responseText;
       break;
     case 400:
       console.log(`${xhr.status} - Неверный запрос`);
