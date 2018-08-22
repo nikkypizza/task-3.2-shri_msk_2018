@@ -23,9 +23,7 @@ const calcDeviceBestCostMap = (item) => {
   let costVariants = {};
 
   // Если duration превышает время работы mode - кидаем ошибку
-  if (item.duration > Math.abs(deviceModeEnd - deviceModeStart) + 1) {
-    console.error(`Device ${item.name} duration does not match its mode`);
-  }
+  if (item.duration > Math.abs(deviceModeEnd - deviceModeStart) + 1) {}
 
   // Алгоритм для дневного и круглосуточного режимов
   if (item.mode !== `night`) {
@@ -77,9 +75,14 @@ const calcDeviceBestCostMap = (item) => {
   return intervalPricesMap;
 };
 
+// Собирает все вычисления в аутпут объект
 const getOutputData = (inputData) => {
+  var schedule = {};
+  for (var i = 0; i <= 23; i++) {
+    schedule[i] = [];
+  }
   let outputData = {
-    schedule: {},
+    schedule: schedule,
     consumedEnergy: {
       value: null,
       devices: {}
@@ -88,23 +91,37 @@ const getOutputData = (inputData) => {
 
   inputData.devices.forEach((it) => {
     let cheapestOptionMap = calcDeviceBestCostMap(it);
-    // Цикл для outputData.schedule, тут
+    let scheduleFrom = cheapestOptionMap.minPriceIndex;
+    let scheduleTo = parseInt(scheduleFrom) + parseInt(it.duration - 1);
+
+    if (scheduleTo <= 23) {
+      for (let i = scheduleFrom; i <= scheduleTo; i++) {
+        outputData.schedule[i].unshift(it.id);
+      }
+    } else {
+      for (let j = scheduleFrom; j <= 23; j++) {
+        outputData.schedule[j].unshift(it.id);
+      }
+      for (let k = 0; k < scheduleFrom; k++) {
+        outputData.schedule[k].unshift(it.id);
+      }
+    }
     outputData.consumedEnergy.value += parseFloat(cheapestOptionMap.minPrice);
     outputData.consumedEnergy.devices[it.id] = cheapestOptionMap.minPrice;
-    console.log(cheapestOptionMap);
   });
 
   return outputData;
 };
 
-let kek = getOutputData(inputData);
-console.log(kek);
+// Результат как объект
+const finalOutputData = getOutputData(inputData);
+// и как JSON
+const finalOutputDataJSON = JSON.stringify(finalOutputData);
 
+console.log(finalOutputData);
 
 /*
 TODO:
-- Пройтись по inputData с помощью forEach, внести все id в "schedule"
-- Через JSON.stringify() вывести работу кода как JSON
 - Рефакторинг, избавиться от eval
 - Написать TLD юнит тесты
 */
