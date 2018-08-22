@@ -14,18 +14,9 @@ const DEVICE_MODES = {
   night: { start: 21, end: 6 }
 };
 
-// // Mock-объект
-// let testItem = {
-//   id: `C515D887EDBBE669B2FDAC62F571E9E9`,
-//   name: `Духовка`,
-//   power: 950,
-//   duration: 3,
-//   mode: `night`
-// };
-
 // Принимает объект устройства и возвращает значение часа
-// с которого начинать работу будет дешевле всего
-const calcDeviceIntervalCosts = (item) => {
+// с которого начинать работу будет дешевле всего, и стоимость работы
+const calcDeviceBestCostMap = (item) => {
   let deviceModeStart = eval(`DEVICE_MODES.${item.mode}.start`);
   let deviceModeEnd = eval(`DEVICE_MODES.${item.mode}.end`);
   let startingIndex = deviceModeStart + (item.duration - 1);
@@ -52,9 +43,7 @@ const calcDeviceIntervalCosts = (item) => {
       }
 
       costVariants[i] = (sum * item.power / 1000).toFixed(2);
-      // На Я.трансляции прозвучало, что округлить до двух знаков после запятой достаточно
     }
-    // Алгоритм для ночного режима
   } else {
     const HOURS_IN_DAY = 24;
     const NIGHT_MODE_BY_ITERATION = 30;
@@ -75,19 +64,46 @@ const calcDeviceIntervalCosts = (item) => {
       // Введем еще один счетчик чтобы сравнЯть ключи в
       // результирующем объекте вне зависимости от режима работы прибора
       let m = i;
-      if (m >= 24) { m -= 24; }
+      if (m >= HOURS_IN_DAY) { m -= HOURS_IN_DAY; }
       costVariants[m] = (sum * item.power / 1000).toFixed(2);
     }
   }
-  return costVariants;
+  // Находим минимальное значение энергопотребления ...
+  let minPrice = Object.values(costVariants).sort((prev, next) => prev - next)[0];
+  // И индекс его начала
+  let minPriceIndex = Object.keys(costVariants).find((key) => costVariants[key] === minPrice);
+
+  const intervalPricesMap = { name: item.name, minPriceIndex, minPrice }
+  return intervalPricesMap;
 };
+
+const getOutputData = (inputData) => {
+  let outputData = {
+    schedule: {},
+    consumedEnergy: {
+      value: null,
+      devices: {}
+    }
+  };
+
+  inputData.devices.forEach((it) => {
+    let cheapestOptionMap = calcDeviceBestCostMap(it);
+    // Цикл для outputData.schedule, тут
+    outputData.consumedEnergy.value += parseFloat(cheapestOptionMap.minPrice);
+    outputData.consumedEnergy.devices[it.id] = cheapestOptionMap.minPrice;
+    console.log(cheapestOptionMap);
+  });
+
+  return outputData;
+};
+
+let kek = getOutputData(inputData);
+console.log(kek);
 
 
 /*
 TODO:
-- Найти в costVariants первое вхождение минимального значения.
 - Пройтись по inputData с помощью forEach, внести все id в "schedule"
-- Соответственно заполнить "consumedEnergy"
 - Через JSON.stringify() вывести работу кода как JSON
 - Рефакторинг, избавиться от eval
 - Написать TLD юнит тесты
