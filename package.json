@@ -1,0 +1,22 @@
+{
+  "name": "shri-2018-2-task-3",
+  "version": "1.0.0",
+  "description": "В этом репозитории находятся материалы тестового задания по JS для [14-й Школы разработки интерфейсов](https://academy.yandex.ru/events/frontend/shri_msk-2018-2) (осень 2018, Москва, Санкт-Петербург, Симферополь).",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikkypizza/task-3.2-shri_msk_2018.git"
+  },
+  "author": "nikkypizza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikkypizza/task-3.2-shri_msk_2018/issues"
+  },
+  "homepage": "https://github.com/nikkypizza/task-3.2-shri_msk_2018#readme",
+  "devDependencies": {
+    "gulp": "3.9.1",
+    "chai": "4.1.2",
+    "gulp-mocha": "6.0.0"
+  }
+}

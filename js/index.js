@@ -6,7 +6,7 @@ const pathToInputData = `js/data/input.json`;
 const inputData = parseJSON(pathToInputData);
 // На основе "rates" из JSON составляем объект с почасовыми тарифами
 const ratesRangeData = createRatesMap(inputData.rates);
-
+const HOURS_IN_DAY = 24;
 // Расписание работы режимов
 const DEVICE_MODES = {
   undefined: { start: 0, end: 23 },
@@ -21,9 +21,6 @@ const calcDeviceBestCostMap = (item) => {
   let deviceModeEnd = eval(`DEVICE_MODES.${item.mode}.end`);
   let startingIndex = deviceModeStart + (item.duration - 1);
   let costVariants = {};
-
-  // Если duration превышает время работы mode - кидаем ошибку
-  if (item.duration > Math.abs(deviceModeEnd - deviceModeStart) + 1) {}
 
   // Алгоритм для дневного и круглосуточного режимов
   if (item.mode !== `night`) {
@@ -43,7 +40,6 @@ const calcDeviceBestCostMap = (item) => {
       costVariants[i] = (sum * item.power / 1000).toFixed(2);
     }
   } else {
-    const HOURS_IN_DAY = 24;
     const NIGHT_MODE_BY_ITERATION = 30;
 
     // Для преодоления полуночи и сохранения релевантных цен
@@ -78,7 +74,7 @@ const calcDeviceBestCostMap = (item) => {
 // Собирает все вычисления в аутпут объект
 const getOutputData = (inputData) => {
   var schedule = {};
-  for (var i = 0; i <= 23; i++) {
+  for (var i = 0; i <= HOURS_IN_DAY - 1; i++) {
     schedule[i] = [];
   }
   let outputData = {
@@ -94,12 +90,12 @@ const getOutputData = (inputData) => {
     let scheduleFrom = cheapestOptionMap.minPriceIndex;
     let scheduleTo = parseInt(scheduleFrom) + parseInt(it.duration - 1);
 
-    if (scheduleTo <= 23) {
+    if (scheduleTo <= HOURS_IN_DAY - 1) {
       for (let i = scheduleFrom; i <= scheduleTo; i++) {
         outputData.schedule[i].unshift(it.id);
       }
     } else {
-      for (let j = scheduleFrom; j <= 23; j++) {
+      for (let j = scheduleFrom; j <= HOURS_IN_DAY - 1; j++) {
         outputData.schedule[j].unshift(it.id);
       }
       for (let k = 0; k < scheduleFrom; k++) {
