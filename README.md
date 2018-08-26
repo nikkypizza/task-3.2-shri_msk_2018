@@ -4,5 +4,5 @@
 
 ### Инструменты при решении
 Чтобы обойти локальную блокировку загрузки JSON файлов использовал `browsersync` из консоли:  
-`browser-sync start --server --files "js/*.js"`  
+`browser-sync start --server --files "js/**/*.js"`  
 Для тестов - `chai` + `mocha` 

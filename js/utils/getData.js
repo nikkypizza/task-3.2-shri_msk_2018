@@ -6,7 +6,6 @@ const loadJsonFileAjaxSync = (filePath) => {
   switch (xhr.status) {
     case 200:
       return xhr.responseText;
-      break;
     case 400:
       console.log(`${xhr.status} - Неверный запрос`);
       break;

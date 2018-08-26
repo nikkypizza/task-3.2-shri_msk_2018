@@ -15,8 +15,11 @@
   },
   "homepage": "https://github.com/nikkypizza/task-3.2-shri_msk_2018#readme",
   "devDependencies": {
-    "gulp": "3.9.1",
     "chai": "4.1.2",
-    "gulp-mocha": "6.0.0"
+    "gulp": "3.9.1",
+    "gulp-better-rollup": "^3.3.0",
+    "gulp-mocha": "6.0.0",
+    "rollup": "^0.64.1",
+    "rollup-plugin-commonjs": "^9.1.6"
   }
 }
